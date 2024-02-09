@@ -64,7 +64,7 @@ elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
+    settings_name = os.environ.get("SETTINGS_NAME", "todo_secrets")
     
     print(f"\nusing secrets settings: {settings_name}\n")
     
@@ -147,6 +147,7 @@ INSTALLED_APPS = [
 
     'todos',
 ]
+
 
 # new
 REST_FRAMEWORK = {
@@ -233,14 +234,14 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
     from google.oauth2 import service_account
     GS_BUCKET_NAME = env("GS_BUCKET_NAME")
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-        os.path.join(BASE_DIR, 'config/heidless-pfolio-deploy-2-7240e1b72d37.json')
+        os.path.join(BASE_DIR, 'todo_api/heidless-todo-deploy-0-7a8bbb739de6.json')
     )
     #STATIC_URL = "/static/"
     DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     GS_DEFAULT_ACL = "publicRead"
 
-    STATIC_URL = 'https://storage.cloud.google.com/pfolio-backend-bucket-2/'
+    STATIC_URL = 'https://storage.cloud.google.com/pfolio-todo-bucket-0/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
     MEDIA_URL = '/media/'
