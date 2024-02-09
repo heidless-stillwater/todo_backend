@@ -5,6 +5,7 @@ heidless-pfolio-deploy*.json
 cloud-run-install*.json
 cloud-sql-proxy
 
+heidless*.json
 google-cloud-sdk
 
 

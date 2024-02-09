@@ -234,7 +234,7 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
     from google.oauth2 import service_account
     GS_BUCKET_NAME = env("GS_BUCKET_NAME")
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-        os.path.join(BASE_DIR, 'todo_api/heidless-todo-deploy-0-7a8bbb739de6.json')
+        os.path.join(BASE_DIR, 'todo_api/heidless-todo-deploy-0-31aaea3392a5.json')
     )
     #STATIC_URL = "/static/"
     DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
