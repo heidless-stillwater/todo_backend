@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 # Change this to "False" when you are ready for production
 env = environ.Env(DEBUG=(bool, True))
-env_file = os.path.join(BASE_DIR, ".env")
+env_file = os.path.join(BASE_DIR, "config/.env")
 
 #print("#####################")
 #print(os.getenv('DATABASE_URL'))
@@ -76,7 +76,7 @@ elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("SETTINGS_NAME", "todo_secrets")
+    settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
     
     print(f"using secrets settings: {settings_name}")
     
@@ -116,11 +116,6 @@ if CLOUDRUN_SERVICE_URL:
 else:
     ALLOWED_HOSTS = ["*"]
 
-# ALLOWED_HOSTS = [
-#     "*",
-#     "http://127.0.0.1"
-# ]
-
 print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
 # [END cloudrun_django_csrf]
@@ -134,11 +129,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "storages",
     
-    'rest_framework',
-    'corsheaders',
-
-    'todos',
+    # Local
+    'about',
+    'projects',
+    'research',
+    'technologies',
+    'contact',
+    'upload',
 ]
 
 MIDDLEWARE = [
@@ -151,12 +150,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-]
-
-ROOT_URLCONF = 'todo_api.urls'
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -173,7 +167,7 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = 'todo_api.wsgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # [START cloudrun_django_database_config]
@@ -237,14 +231,14 @@ USE_TZ = True
 from google.oauth2 import service_account
 GS_BUCKET_NAME = env("GS_BUCKET_NAME")
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'todo_api/heidless-todo-deploy-2-2e9c6013378b.json')
+    os.path.join(BASE_DIR, 'config/heidless-pfolio-deploy-2-7240e1b72d37.json')
 )
 #STATIC_URL = "/static/"
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_DEFAULT_ACL = "publicRead"
 
-STATIC_URL = 'https://storage.cloud.google.com/pfolio-todo-bucket-2/'
+STATIC_URL = 'https://storage.cloud.google.com/pfolio-backend-bucket-2/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
