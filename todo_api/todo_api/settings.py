@@ -180,6 +180,7 @@ WSGI_APPLICATION = 'todo_api.wsgi.application'
 # Use django-environ to parse the connection string
 
 DATABASES = {"default": env.db()}
+print(f'DATABASES:{DATABASES}')
 
 #DATABASES = {
 #    'default': {
