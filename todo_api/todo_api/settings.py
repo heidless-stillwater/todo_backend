@@ -61,60 +61,12 @@ if os.path.isfile(env_file):
     print("### Using local secret file")
     print('env-file: ' + env_file)
     env.read_env(env_file)
-# [START_EXCLUDE]
-elif os.getenv("TRAMPOLINE_CI", None):
-    # Create local settings if running with CI, for unit testing
-    print("TRAMPOLINE_CI")
-    placeholder = (
-        f"SECRET_KEY=a\n"
-        "GS_BUCKET_NAME=None\n"
-        f"DATABASE_URL=sqlite://{os.path.join(BASE_DIR, 'db.sqlite3')}"
-    )
-    env.read_env(io.StringIO(placeholder))
-# [END_EXCLUDE]
-elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
-    # Pull secrets from Secret Manager
-    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
-    client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("SETTINGS_NAME", "todo_secrets")
     
-    print(f"using secrets settings: {settings_name}")
-    
-    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
-    
-    
-    payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
-    
-    print(f"SECRETS: {payload}")
-    print(f"env settings: {env.read_env(io.StringIO(payload))}")
-
-    env.read_env(io.StringIO(payload))
-    print(f"SECRETS PAYLOAD: {env.read_env(io.StringIO(payload))}")
-else:
-    raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
-# [END cloudrun_django_secret_config]
 SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
-# [START cloudrun_django_csrf]
-# SECURITY WARNING: It's recommended that you use this when
-# running in production. The URL will be known once you first deploy
-# to Cloud Run. This code takes the URL and converts it to both these settings formats.
-CLOUDRUN_SERVICE_URL = env("CLOUDRUN_SERVICE_URL", default=None)
-if CLOUDRUN_SERVICE_URL:
-    print(f"CLOUDRUN_SERVICE_URL: {CLOUDRUN_SERVICE_URL}")
-    ALLOWED_HOSTS = [urlparse(CLOUDRUN_SERVICE_URL).netloc]
-#    ALLOWED_HOSTS = CLOUDRUN_SERVICE_URL, 'localhost', '127.0.0.1'
-    print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
-#    TST = CLOUDRUN_SERVICE_URL, 'localhost'
-#    print(TST)
-    CSRF_TRUSTED_ORIGINS = [CLOUDRUN_SERVICE_URL]
-    print(f"CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}")
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-else:
-    ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = [
 #     "*",
@@ -195,12 +147,12 @@ DATABASES = {"default": env.db()}
 #    }
 #}
 
-# If the flag as been set, configure to use proxy
-if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES["default"]["HOST"] = "127.0.0.1"
-    DATABASES["default"]["PORT"] = 1234
 
-# [END cloudrun_django_database_config] #
+# # If the flag as been set, configure to use proxy
+# if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
+#     DATABASES["default"]["HOST"] = "127.0.0.1"
+#     DATABASES["default"]["PORT"] = 1234
+# # [END cloudrun_django_database_config] #
 
 # Password validation
 
@@ -231,20 +183,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# [START cloudrun_django_static_config]
-# Define static storage via django-storages[google]
-from google.oauth2 import service_account
-GS_BUCKET_NAME = env("GS_BUCKET_NAME")
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'todo_api/heidless-todo-deploy-2-2e9c6013378b.json')
-)
-#STATIC_URL = "/static/"
-DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-GS_DEFAULT_ACL = "publicRead"
+# DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+# STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+# GS_DEFAULT_ACL = "publicRead"
 
-STATIC_URL = 'https://storage.cloud.google.com/pfolio-todo-bucket-2/'
+# STATIC_URL = 'https://storage.cloud.google.com/pfolio-todo-bucket-2/'
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
